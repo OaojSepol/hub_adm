@@ -43,7 +43,7 @@ class Voice(commands.Cog):
                     await before.channel.delete()
                     await execute("DELETE FROM temp_voice WHERE channel_id = ?", (before.channel.id,))
 
-    @commands.hybrid_command(name="v_invite")
+    @commands.hybrid_command(name="v_invite", description="Convida um membro para entrar na sua sala privada.")
     async def voice_invite(self, ctx, member: discord.Member):
         await ctx.defer(ephemeral=True)
         

@@ -92,7 +92,7 @@ class Tickets(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="ticket_panel")
+    @commands.hybrid_command(name="ticket_panel", description="Envia o painel de abertura de tickets no canal atual.")
     @commands.has_permissions(administrator=True)
     async def ticket_panel(self, ctx):
         embed = discord.Embed(

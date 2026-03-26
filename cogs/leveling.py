@@ -39,7 +39,7 @@ class Leveling(commands.Cog):
             else:
                 await execute("UPDATE leveling SET xp = ? WHERE user_id = ? AND guild_id = ?", (new_xp, user_id, guild_id))
 
-    @commands.hybrid_command(name="leaderboard")
+    @commands.hybrid_command(name="leaderboard", description="Exibe o ranking dos top 10 membros com mais XP.")
     async def leaderboard(self, ctx):
         await ctx.defer(ephemeral=True)
         users = await fetch_all("SELECT user_id, xp, level FROM leveling WHERE guild_id = ? ORDER BY xp DESC LIMIT 10", (ctx.guild.id,))
