@@ -46,6 +46,10 @@ class Voice(commands.Cog):
     @commands.hybrid_command(name="v_invite")
     async def voice_invite(self, ctx, member: discord.Member):
         await ctx.defer(ephemeral=True)
+        
+        if not ctx.author.voice or not ctx.author.voice.channel:
+            return await ctx.send("❌ Você precisa estar em um canal de voz para usar este comando.", ephemeral=True)
+
         temp_data = await fetch_one("SELECT owner_id FROM temp_voice WHERE channel_id = ?", (ctx.author.voice.channel.id,))
         if not temp_data or temp_data[0] != ctx.author.id:
             return await ctx.send("❌ Você não é o dono desta sala privada.", ephemeral=True)
