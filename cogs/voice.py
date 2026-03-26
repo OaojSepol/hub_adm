@@ -29,8 +29,8 @@ class VoicePanelView(ui.View):
             name=f"🔊 Sala de {interaction.user.name}",
             category=category,
             overwrites={
-                interaction.guild.default_role: discord.PermissionOverwrite(connect=False),
-                interaction.user: discord.PermissionOverwrite(connect=True, manage_channels=True, manage_permissions=True)
+                interaction.guild.default_role: discord.PermissionOverwrite(view_channel=False),
+                interaction.user: discord.PermissionOverwrite(view_channel=True, connect=True, manage_channels=True, manage_permissions=True)
             }
         )
         
@@ -90,3 +90,4 @@ class Voice(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(Voice(bot))
+))
