@@ -43,7 +43,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="help")
+    @commands.hybrid_command(name="help", description="Exibe o menu de ajuda do bot.")
     async def help_command(self, ctx):
         embed = discord.Embed(
             title="📚 Central de Ajuda",

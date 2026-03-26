@@ -106,18 +106,20 @@ class Tickets(commands.Cog):
             color=discord.Color.from_rgb(47, 49, 54) # Cor escura "Discord-like"
         )
         embed.set_thumbnail(url="https://cdn-icons-png.flaticon.com/512/1067/1067562.png") # Ícone de ticket genérico
+        
+        # Se for Slash Command, enviamos como efêmero a confirmação se desejar, 
+        # mas aqui o painel PRECISA ser público.
         await ctx.send(embed=embed, view=TicketPersistentView())
-        if ctx.interaction:
-            await ctx.interaction.response.send_message("✅ Painel enviado com sucesso!", ephemeral=True)
 
-    @commands.command(name="close")
+    @commands.hybrid_command(name="close", description="Fecha o ticket atual.")
     async def close_ticket(self, ctx):
+        await ctx.defer(ephemeral=True)
         ticket_data = await fetch_one("SELECT user_id FROM tickets WHERE channel_id = ? AND status = 'open'", (ctx.channel.id,))
         if not ticket_data:
-            return await ctx.send("❌ Este canal não é um ticket ativo.")
+            return await ctx.send("❌ Este canal não é um ticket ativo.", ephemeral=True)
 
         await execute("UPDATE tickets SET status = 'closed' WHERE channel_id = ?", (ctx.channel.id,))
-        await ctx.send("🔒 Este ticket será fechado e deletado em 5 segundos...")
+        await ctx.send("🔒 Este ticket será fechado e deletado em 5 segundos...", ephemeral=True)
         await asyncio.sleep(5)
         await ctx.channel.delete()
 

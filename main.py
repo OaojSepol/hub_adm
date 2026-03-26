@@ -37,12 +37,18 @@ class HubAdmBot(commands.Bot):
             guild_id = os.getenv("GUILD_ID")
             if guild_id:
                 guild = discord.Object(id=int(guild_id))
+                
+                # Limpa a árvore do servidor antes de copiar os novos
+                self.tree.clear(guild=guild)
+                
                 self.tree.copy_global_to(guild=guild)
                 await self.tree.sync(guild=guild)
                 print(f"Comandos sincronizados no servidor {guild_id}")
             else:
+                # Limpa globalmente (pode demorar)
+                # self.tree.clear(guild=None) 
                 await self.tree.sync()
-                print("Comandos sincronizados globalmente (pode levar até 1h)")
+                print("Comandos sincronizados globalmente")
         except Exception as e:
             print(f"Erro ao sincronizar comandos: {e}")
 
