@@ -12,7 +12,6 @@ class VoicePanelView(ui.View):
     @ui.button(label="Criar Sala Privada", style=discord.ButtonStyle.primary, emoji="🔊", custom_id="create_voice_btn")
     async def create_voice(self, interaction: discord.Interaction, button: ui.Button):
         # Requisito: 3 dias de servidor
-        from datetime import datetime, timezone
         days_on_server = (datetime.now(timezone.utc) - interaction.user.joined_at).days
         if days_on_server < 3:
             return await interaction.response.send_message("❌ Você precisa de pelo menos 3 dias de servidor para criar uma sala.", ephemeral=True)
@@ -24,7 +23,7 @@ class VoicePanelView(ui.View):
         if not category:
             return await interaction.response.send_message("⚠️ A categoria de voz não foi configurada pelo administrador.", ephemeral=True)
 
-        # Criação da sala
+        # Criação da sala (Oculta por padrão)
         new_channel = await interaction.guild.create_voice_channel(
             name=f"🔊 Sala de {interaction.user.name}",
             category=category,
@@ -85,9 +84,9 @@ class Voice(commands.Cog):
         if not temp_data or temp_data[0] != ctx.author.id:
             return await ctx.send("❌ Você não é o dono desta sala privada.", ephemeral=True)
         
-        await ctx.author.voice.channel.set_permissions(member, connect=True)
-        await ctx.send(f"✅ {member.mention} foi convidado para sua sala!", ephemeral=True)
+        # Concede permissão de Ver e Conectar
+        await ctx.author.voice.channel.set_permissions(member, view_channel=True, connect=True)
+        await ctx.send(f"✅ {member.mention} agora pode ver e entrar na sua sala!", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Voice(bot))
-))
