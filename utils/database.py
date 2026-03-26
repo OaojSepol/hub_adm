@@ -15,6 +15,7 @@ async def init_db():
                 ticket_category_id INTEGER,
                 log_channel_id INTEGER,
                 staff_channel_id INTEGER,
+                voice_category_id INTEGER,
                 welcome_channel_id INTEGER,
                 goodbye_channel_id INTEGER,
                 staff_role_id INTEGER,
@@ -22,6 +23,12 @@ async def init_db():
                 xp_role_veteran_id INTEGER
             )
         """)
+
+        # Migração: Tenta adicionar voice_category_id se não existir
+        try:
+            await db.execute("ALTER TABLE server_config ADD COLUMN voice_category_id INTEGER")
+            await db.commit()
+        except aiosqlite.OperationalError: pass
 
         # Migração: Tenta adicionar staff_channel_id se não existir
         try:

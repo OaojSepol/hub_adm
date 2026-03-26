@@ -71,6 +71,16 @@ class RolesSelectView(ui.View):
 
 # --- Dashboard Principal ---
 
+class VoiceSelectView(ui.View):
+    def __init__(self):
+        super().__init__(timeout=60)
+
+    @ui.select(cls=ui.ChannelSelect, channel_types=[discord.ChannelType.category], placeholder="Selecione a Categoria de Salas de Voz...")
+    async def select_voice_cat(self, interaction: discord.Interaction, select: ui.ChannelSelect):
+        category = select.values[0]
+        await execute("UPDATE server_config SET voice_category_id = ? WHERE guild_id = ?", (category.id, interaction.guild_id))
+        await interaction.response.send_message(f"✅ Categoria de Voz definida como **{category.name}**!", ephemeral=True)
+
 class SetupView(ui.View):
     def __init__(self, bot):
         super().__init__(timeout=None)
@@ -83,6 +93,10 @@ class SetupView(ui.View):
     @ui.button(label="Tickets (Canal/Cat)", style=discord.ButtonStyle.primary, emoji="🎫")
     async def setup_tickets(self, interaction: discord.Interaction, button: ui.Button):
         await interaction.response.send_message("Selecione o canal e a categoria:", view=TicketsSelectView(), ephemeral=True)
+
+    @ui.button(label="Salas de Voz (Cat)", style=discord.ButtonStyle.primary, emoji="🔊")
+    async def setup_voice(self, interaction: discord.Interaction, button: ui.Button):
+        await interaction.response.send_message("Selecione a categoria para as salas privadas:", view=VoiceSelectView(), ephemeral=True)
 
     @ui.button(label="Boas-vindas/Saída", style=discord.ButtonStyle.primary, emoji="👋")
     async def setup_welcome(self, interaction: discord.Interaction, button: ui.Button):
