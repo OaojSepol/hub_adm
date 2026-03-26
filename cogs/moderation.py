@@ -21,7 +21,7 @@ class ModPanelView(ui.View):
         self.selected_user = select.values[0]
         await interaction.response.send_message(f"👤 Usuário **{self.selected_user.name}** selecionado. Escolha a ação abaixo:", ephemeral=True)
 
-    @ui.button(label="Expulsar (Kick)", style=discord.ButtonStyle.orange, emoji="👢")
+    @ui.button(label="Expulsar (Kick)", style=discord.ButtonStyle.secondary, emoji="👢")
     async def kick_btn(self, interaction: discord.Interaction, button: ui.Button):
         if not self.selected_user: return await interaction.response.send_message("❌ Selecione um usuário primeiro!", ephemeral=True)
         await self.selected_user.kick(reason="Pelo Painel de Moderação")
@@ -31,7 +31,7 @@ class ModPanelView(ui.View):
         await self.send_log(interaction.guild, embed)
         await interaction.response.send_message(f"✅ {self.selected_user.name} expulso.", ephemeral=True)
 
-    @ui.button(label="Banir (Ban)", style=discord.ButtonStyle.red, emoji="🔨")
+    @ui.button(label="Banir (Ban)", style=discord.ButtonStyle.danger, emoji="🔨")
     async def ban_btn(self, interaction: discord.Interaction, button: ui.Button):
         if not self.selected_user: return await interaction.response.send_message("❌ Selecione um usuário primeiro!", ephemeral=True)
         await self.selected_user.ban(reason="Pelo Painel de Moderação")

@@ -61,7 +61,7 @@ class HubAdmBot(commands.Bot):
             guild_id = os.getenv("GUILD_ID")
             if guild_id:
                 guild = discord.Object(id=int(guild_id))
-                self.tree.clear(guild=guild)
+                self.tree.clear_commands(guild=guild)
                 self.tree.copy_global_to(guild=guild)
                 await self.tree.sync(guild=guild)
                 print(f"{Color.GREEN} [✓] {Color.END} Comandos sincronizados no Servidor: {Color.YELLOW}{guild_id}{Color.END}")
