@@ -9,52 +9,75 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID", 0))
 
+# Cores para o console
+class Color:
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    CYAN = "\033[96m"
+    BOLD = "\033[1m"
+    END = "\033[0m"
+
 class HubAdmBot(commands.Bot):
     def __init__(self):
         intents = discord.Intents.all()
         super().__init__(
-            command_prefix=commands.when_mentioned, # Apenas menção ou Slash
+            command_prefix=commands.when_mentioned,
             intents=intents,
             help_command=None,
             owner_id=OWNER_ID
         )
 
     async def setup_hook(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"{Color.BLUE}{Color.BOLD}")
+        print("  _   _ _   _ ____       _    ____  __  __ ")
+        print(" | | | | | | | __ )     / \  |  _ \|  \/  |")
+        print(" | |_| | | | |  _ \    / _ \ | | | | |\/| |")
+        print(" |  _  | |_| | |_) |  / ___ \| |_| | |  | |")
+        print(" |_| |_|\___/|____/  /_/   \_\____/|_|  |_|")
+        print(f"\n{Color.CYAN}--- INICIALIZANDO MÓDULOS ---{Color.END}")
+        
         # Inicializa o Banco de Dados
         await init_db()
         
         # Carrega extensões (Cogs)
+        loaded = 0
+        failed = 0
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 try:
                     await self.load_extension(f"cogs.{filename[:-3]}")
-                    print(f"Loaded extension: {filename}")
+                    print(f"{Color.GREEN} [✓] {Color.END} Módulo carregado: {Color.BOLD}{filename}{Color.END}")
+                    loaded += 1
                 except Exception as e:
-                    print(f"Failed to load extension {filename}: {e}")
+                    print(f"{Color.RED} [✗] {Color.END} Erro no módulo {filename}: {e}")
+                    failed += 1
 
         # Sincroniza comandos Slash
+        print(f"\n{Color.CYAN}--- SINCRONIZAÇÃO SLASH ---{Color.END}")
         try:
             guild_id = os.getenv("GUILD_ID")
             if guild_id:
                 guild = discord.Object(id=int(guild_id))
-                
-                # Limpa a árvore do servidor antes de copiar os novos
                 self.tree.clear(guild=guild)
-                
                 self.tree.copy_global_to(guild=guild)
                 await self.tree.sync(guild=guild)
-                print(f"Comandos sincronizados no servidor {guild_id}")
+                print(f"{Color.GREEN} [✓] {Color.END} Comandos sincronizados no Servidor: {Color.YELLOW}{guild_id}{Color.END}")
             else:
-                # Limpa globalmente (pode demorar)
-                # self.tree.clear(guild=None) 
                 await self.tree.sync()
-                print("Comandos sincronizados globalmente")
+                print(f"{Color.GREEN} [✓] {Color.END} Comandos sincronizados Globalmente")
         except Exception as e:
-            print(f"Erro ao sincronizar comandos: {e}")
+            print(f"{Color.RED} [✗] {Color.END} Erro de sincronização: {e}")
 
     async def on_ready(self):
-        print(f"Logged in as {self.user} (ID: {self.user.id})")
-        print("------")
+        print(f"\n{Color.GREEN}{Color.BOLD}HUB ADM ESTÁ ONLINE!{Color.END}")
+        print(f"{Color.CYAN}Logado como: {Color.YELLOW}{self.user}{Color.END}")
+        print(f"{Color.CYAN}ID do Bot:   {Color.YELLOW}{self.user.id}{Color.END}")
+        print(f"{Color.CYAN}Servidores:  {Color.YELLOW}{len(self.guilds)}{Color.END}")
+        print(f"{Color.CYAN}Membros:     {Color.YELLOW}{sum(g.member_count for g in self.guilds)}{Color.END}")
+        print(f"{Color.CYAN}----------------------------------{Color.END}")
 
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
